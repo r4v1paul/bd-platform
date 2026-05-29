@@ -3,13 +3,17 @@ import { prisma } from "@/lib/prisma";
 
 function formatNumber(value: number | null | undefined, digits = 0) {
   if (value === null || value === undefined) return "-";
+
   return value.toLocaleString("en-US", {
     maximumFractionDigits: digits,
   });
 }
 
 function formatRatio(value: number | null | undefined) {
-  if (value === null || value === undefined || !Number.isFinite(value)) return "-";
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return "-";
+  }
+
   return value.toLocaleString("en-US", {
     maximumFractionDigits: 2,
   });
@@ -74,13 +78,15 @@ export default async function DemandSupplyPage() {
       const province = row.provinsi ?? "Unknown";
       const matchedImport = importMap.get(normalizeProvince(province));
 
-      const demandTonnes = row._sum.kebutuhanAspal ?? 0;
+      const demandTonnes = Number(row._sum.kebutuhanAspal ?? 0);
       const importTonnes = matchedImport?.importTonnes ?? 0;
       const importValueUsd = matchedImport?.importValueUsd ?? 0;
       const gapTonnes = demandTonnes - importTonnes;
 
       const demandImportRatio =
         importTonnes > 0 ? demandTonnes / importTonnes : null;
+
+      const confidence: "Medium" | "Low" = matchedImport ? "Medium" : "Low";
 
       return {
         province,
@@ -89,7 +95,7 @@ export default async function DemandSupplyPage() {
         importValueUsd,
         gapTonnes,
         demandImportRatio,
-        confidence: importTonnes > 0 ? "Medium" : "Low",
+        confidence,
       };
     })
     .sort((a, b) => b.demandTonnes - a.demandTonnes);
@@ -117,16 +123,19 @@ export default async function DemandSupplyPage() {
           value={`${formatNumber(totalDemand, 2)} tons`}
           helper="Sum of Kebutuhan Aspal by province"
         />
+
         <KpiCard
           label="Specified Imports"
           value={`${formatNumber(totalSpecifiedImport, 2)} tons`}
           helper="Excludes Unspecified import bucket"
         />
+
         <KpiCard
           label="Directional Gap"
           value={`${formatNumber(totalDirectionalGap, 2)} tons`}
           helper="Demand minus specified import tonnes"
         />
+
         <KpiCard
           label="Unspecified Import Share"
           value={`${formatNumber(unspecifiedShare, 2)}%`}
@@ -138,6 +147,7 @@ export default async function DemandSupplyPage() {
         <h3 className="text-lg font-semibold tracking-tight text-amber-950">
           Interpretation Warning
         </h3>
+
         <p className="mt-2 text-sm leading-6 text-amber-800">
           This comparison is not a definitive supply-demand balance. The BPS
           import data includes a large Unspecified province category. Provinces
@@ -151,6 +161,7 @@ export default async function DemandSupplyPage() {
           <h3 className="text-lg font-semibold tracking-tight text-slate-950">
             Highest Directional Demand Gaps
           </h3>
+
           <p className="mt-2 text-sm text-slate-500">
             Provinces ranked by estimated demand minus specified import tonnes.
           </p>
@@ -175,18 +186,23 @@ export default async function DemandSupplyPage() {
                   <td className="px-6 py-4 font-medium text-slate-950">
                     {row.province}
                   </td>
+
                   <td className="px-6 py-4 text-right text-slate-600">
                     {formatNumber(row.demandTonnes, 2)} tons
                   </td>
+
                   <td className="px-6 py-4 text-right text-slate-600">
                     {formatNumber(row.importTonnes, 2)} tons
                   </td>
+
                   <td className="px-6 py-4 text-right font-medium text-slate-950">
                     {formatNumber(row.gapTonnes, 2)} tons
                   </td>
+
                   <td className="px-6 py-4 text-right text-slate-600">
                     {formatRatio(row.demandImportRatio)}
                   </td>
+
                   <td className="px-6 py-4 text-right">
                     <span
                       className={
@@ -210,8 +226,10 @@ export default async function DemandSupplyPage() {
           <h3 className="text-lg font-semibold tracking-tight text-slate-950">
             Full Province Comparison
           </h3>
+
           <p className="mt-2 text-sm text-slate-500">
-            All provinces with demand records, matched against BPS import rows when available.
+            All provinces with demand records, matched against BPS import rows
+            when available.
           </p>
         </div>
 
@@ -234,18 +252,23 @@ export default async function DemandSupplyPage() {
                   <td className="px-6 py-4 font-medium text-slate-950">
                     {row.province}
                   </td>
+
                   <td className="px-6 py-4 text-right text-slate-600">
                     {formatNumber(row.demandTonnes, 2)} tons
                   </td>
+
                   <td className="px-6 py-4 text-right text-slate-600">
                     {formatNumber(row.importTonnes, 2)} tons
                   </td>
+
                   <td className="px-6 py-4 text-right text-slate-600">
                     ${formatNumber(row.importValueUsd, 0)}
                   </td>
+
                   <td className="px-6 py-4 text-right font-medium text-slate-950">
                     {formatNumber(row.gapTonnes, 2)} tons
                   </td>
+
                   <td className="px-6 py-4 text-right">
                     <span
                       className={
@@ -283,9 +306,11 @@ function KpiCard({
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
       <p className="text-sm font-medium text-slate-500">{label}</p>
+
       <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-950">
         {value}
       </p>
+
       <p className="mt-2 text-xs leading-5 text-slate-400">{helper}</p>
     </div>
   );

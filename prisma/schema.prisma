@@ -8,67 +8,94 @@ datasource db {
 }
 
 model AsphaltMarket {
-  id                String   @id @default(cuid())
-  wilayah           String?
-  kabupatenKota     String?
-  daerah            String?
-  kodeTender        String?
-  kodeRup           String?
-  namaPaket         String?
-  sumberDana        String?
-  nilaiHpsText      String?
-  value             Float?
-  namaPemenang      String?
-  tahapanTender     String?
-  kebutuhanAspal    Float?
-  provinsi          String?
-  tipeWilayah       String?
-  tahunAnggaran     Int?
-  createdAt         DateTime @default(now())
+  id             String   @id @default(cuid())
+  wilayah        String?
+  kabupatenKota  String?
+  daerah         String?
+  kodeTender     String?
+  kodeRup        String?
+  namaPaket      String?
+  sumberDana     String?
+  nilaiHpsText   String?
+  value          Float?
+  namaPemenang   String?
+  tahapanTender  String?
+  kebutuhanAspal Float?
+  provinsi       String?
+  tipeWilayah    String?
+  tahunAnggaran  Int?
+  createdAt      DateTime @default(now())
 }
 
 model RegionalDemandIndex {
-  id                 String   @id @default(cuid())
-  wilayah            String?
-  provinsi           String?
-  kabupatenKota      String?
-  tahunAnggaran      Int?
-  packageCount       Int?
-  totalHps           Float?
-  totalAsphaltTon    Float?
-  averageHps         Float?
-  demandIndex        Float?
-  createdAt          DateTime @default(now())
-}
-
-model DroppedAudit {
   id              String   @id @default(cuid())
   wilayah         String?
   provinsi        String?
   kabupatenKota   String?
   tahunAnggaran   Int?
-  namaPaket       String?
-  dropReason      String?
+  packageCount    Int?
+  totalHps        Float?
+  totalAsphaltTon Float?
+  averageHps      Float?
+  demandIndex     Float?
   createdAt       DateTime @default(now())
+}
+
+model DroppedAudit {
+  id            String   @id @default(cuid())
+  wilayah       String?
+  provinsi      String?
+  kabupatenKota String?
+  tahunAnggaran Int?
+  namaPaket     String?
+  dropReason    String?
+  createdAt     DateTime @default(now())
 }
 
 model BpsImport {
-  id              String   @id @default(cuid())
-  province        String
-  importTonnes    Float
-  year            Int
-  importValueUsd  Float
-  createdAt       DateTime @default(now())
+  id             String   @id @default(cuid())
+  province       String
+  importTonnes   Float
+  year           Int
+  importValueUsd Float
+  createdAt      DateTime @default(now())
 }
 
 model BitumenImporterMonthly {
-  id                  String   @id @default(cuid())
-  importer            String
-  productCode         String   @default("2714")
-  productDescription  String?
-  month               String
-  importedValueUsdK   Float
-  importedValueUsd    Float
-  source              String   @default("Trade Map")
-  createdAt           DateTime @default(now())
+  id                 String   @id @default(cuid())
+  importer           String
+  productCode        String   @default("2714")
+  productDescription String?
+  month              String
+  importedValueUsdK  Float
+  importedValueUsd   Float
+  source             String   @default("Trade Map")
+  createdAt          DateTime @default(now())
+}
+
+model Tender {
+  id Int @id @default(autoincrement())
+
+  projectName  String
+  province     String?
+  city         String?
+  owner        String?
+  contractor   String?
+  tenderYear   Int?
+  projectValue Float?
+  status       String?
+  sourceFile   String?
+
+  roadLengthM            Float
+  roadWidthM             Float
+  layerThicknessM        Float
+  asphaltDensityTonPerM3 Float
+  bitumenContentFraction Float
+
+  asphaltVolumeM3    Float
+  asphaltMassTon     Float
+  bitumenRequiredTon Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
