@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/app/generated/prisma
+
+# Large generated CMEMS forecast HTML files
+public/forecasts/cmems/*.html
+
+# Large generated CMEMS forecast HTML files
+public/forecasts/cmems/*.html
+prisma/dev.db

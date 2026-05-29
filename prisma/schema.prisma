@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AsphaltMarket {
+  id                String   @id @default(cuid())
+  wilayah           String?
+  kabupatenKota     String?
+  daerah            String?
+  kodeTender        String?
+  kodeRup           String?
+  namaPaket         String?
+  sumberDana        String?
+  nilaiHpsText      String?
+  value             Float?
+  namaPemenang      String?
+  tahapanTender     String?
+  kebutuhanAspal    Float?
+  provinsi          String?
+  tipeWilayah       String?
+  tahunAnggaran     Int?
+  createdAt         DateTime @default(now())
+}
+
+model RegionalDemandIndex {
+  id                 String   @id @default(cuid())
+  wilayah            String?
+  provinsi           String?
+  kabupatenKota      String?
+  tahunAnggaran      Int?
+  packageCount       Int?
+  totalHps           Float?
+  totalAsphaltTon    Float?
+  averageHps         Float?
+  demandIndex        Float?
+  createdAt          DateTime @default(now())
+}
+
+model DroppedAudit {
+  id              String   @id @default(cuid())
+  wilayah         String?
+  provinsi        String?
+  kabupatenKota   String?
+  tahunAnggaran   Int?
+  namaPaket       String?
+  dropReason      String?
+  createdAt       DateTime @default(now())
+}
+
+model BpsImport {
+  id              String   @id @default(cuid())
+  province        String
+  importTonnes    Float
+  year            Int
+  importValueUsd  Float
+  createdAt       DateTime @default(now())
+}
+
+model BitumenImporterMonthly {
+  id                  String   @id @default(cuid())
+  importer            String
+  productCode         String   @default("2714")
+  productDescription  String?
+  month               String
+  importedValueUsdK   Float
+  importedValueUsd    Float
+  source              String   @default("Trade Map")
+  createdAt           DateTime @default(now())
+}
